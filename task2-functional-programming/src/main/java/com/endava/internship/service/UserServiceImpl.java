@@ -8,6 +8,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class UserServiceImpl implements UserService {
 
@@ -62,7 +63,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Optional<String> getMostFrequentLastName(final List<User> users) {
-        System.out.println();
         return users.stream()
                 .collect(Collectors.groupingBy(User::getLastName, Collectors.counting()))
                 .entrySet()
@@ -90,11 +90,17 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Map<Privilege, List<User>> groupByPrivileges(List<User> users) {
-        throw new UnsupportedOperationException("Not implemented");
+        return Arrays.stream(Privilege.values())
+                .collect(
+                        Collectors.toMap(Function.identity(), pr -> users.stream()
+                        .filter(user -> user.getPrivileges().contains(pr))
+                        .collect(Collectors.toList()))
+                );
     }
 
     @Override
     public Map<String, Long> getNumberOfLastNames(final List<User> users) {
-        throw new UnsupportedOperationException("Not implemented");
+        return users.stream()
+                .collect(Collectors.groupingBy(User::getLastName, Collectors.counting()));
     }
 }
