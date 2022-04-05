@@ -83,7 +83,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public String convertTo(final List<User> users, final String delimiter, final Function<User, String> mapFun) {
-        throw new UnsupportedOperationException("Not implemented");
+        return users.stream()
+                .map(mapFun)
+                .collect(Collectors.joining(delimiter));
     }
 
     @Override
