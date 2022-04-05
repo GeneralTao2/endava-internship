@@ -63,12 +63,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Optional<String> getMostFrequentLastName(final List<User> users) {
-        return users.stream()
+        return users.stream().map(User::getLastName).distinct().count() == users.size()
+        ? Optional.empty()
+        : users.stream()
                 .collect(Collectors.groupingBy(User::getLastName, Collectors.counting()))
                 .entrySet()
                 .stream()
                 .max(Map.Entry.comparingByValue())
                 .map(Map.Entry::getKey);
+
     }
 
     @SuppressWarnings("unchecked")
