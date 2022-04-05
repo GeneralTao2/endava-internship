@@ -4,10 +4,7 @@ import com.endava.internship.domain.Privilege;
 import com.endava.internship.domain.User;
 import com.endava.internship.service.UserService;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -77,7 +74,11 @@ public class UserServiceImpl implements UserService {
     @SuppressWarnings("unchecked")
     @Override
     public List<User> filterBy(final List<User> users, final Predicate<User>... predicates) {
-        throw new UnsupportedOperationException("Not implemented");
+        return users.stream()
+                .filter(
+                        Arrays.stream(predicates).reduce(predicate -> true, Predicate::and)
+                )
+                .collect(Collectors.toList());
     }
 
     @Override
