@@ -31,3 +31,8 @@ from DEPARTMENTS;
 
 update LOCATIONS
 set DEPARTMENT_AMOUNT = null;
+
+-- -----------------------------------------------------------
+
+insert into employment_logs (first_name, last_name, employment_action)
+values ('dfdfd', 'fdfdf', 'FIRED')
