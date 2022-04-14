@@ -31,3 +31,17 @@ from DEPARTMENTS;
 
 update LOCATIONS
 set DEPARTMENT_AMOUNT = null;
+
+-- -----------------------------------------------------------
+
+insert into employment_logs (first_name, last_name, employment_action)
+values ('dfdfd', 'fdfdf', 'FIRED')
+
+insert into EMPLOYEES (FIRST_NAME, LAST_NAME, EMAIL, PHONE_NUMBER, HIRE_DATE, JOB_ID, SALARY, COMMISSION_PCT, MANAGER_ID, DEPARTMENT_ID)
+values ('Artiom1', 'Diulgher1', 'artiom.diul@endava.com2', '00373690000001', TO_DATE('01-02-2002','DD-MM-YYYY'), 5, 700, null, null, 4);
+;
+delete from EMPLOYEES where EMPLOYEE_ID = 7;
+;
+select * from EMPLOYEES;
+
+select * from EMPLOYMENT_LOGS
