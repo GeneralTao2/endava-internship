@@ -1,11 +1,12 @@
 CREATE TABLE locations
 (
-    location_id    NUMBER(4) PRIMARY KEY,
-    street_address VARCHAR2(40),
-    postal_code    VARCHAR2(12),
-    city           VARCHAR2(30),
-    state_province VARCHAR2(25),
-    country_id     CHAR(2) NOT NULL
+    location_id         NUMBER(4) PRIMARY KEY,
+    street_address      VARCHAR2(40),
+    postal_code         VARCHAR2(12),
+    city                VARCHAR2(30),
+    state_province      VARCHAR2(25),
+    country_id          CHAR(2) NOT NULL,
+    department_amoutn   NUMBER(4)
 );
 
 CREATE SEQUENCE locations_seq MINVALUE 1 MAXVALUE 9900 INCREMENT BY 100 START WITH 3300;
@@ -29,3 +30,4 @@ COMMENT ON COLUMN locations.state_province IS 'State or Province where an office
 company is located.';
 COMMENT ON COLUMN locations.country_id IS 'Country where an office, warehouse, or production site of a company is
 located. Foreign key to country_id column of the countries table.';
+COMMENT ON COLUMN locations.department_amoutn IS 'Contains the amount of departments in the location'
