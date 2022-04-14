@@ -6,11 +6,10 @@ create table projects (
     constraint pro_inv_ck check (project_investment > 0)
 );
 
--- TODO that is this for
-CREATE SEQUENCE employees_seq NOCACHE;
+CREATE SEQUENCE projects_seq NOCACHE;
 
-ALTER TABLE employees
-    MODIFY employee_id DEFAULT employees_seq.nextval;
+ALTER TABLE projects
+    MODIFY project_id DEFAULT projects_seq.nextval;
 
 
 

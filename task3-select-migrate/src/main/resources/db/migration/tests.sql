@@ -6,3 +6,6 @@ values (6, 11, to_date('20', 'HH24'));
 
 insert into PROJECTS (PROJECT_ID, PROJECT_DESCRIPTION, PROJECT_INVESTMENT)
 values (11, 'descljgshfd', 12000);
+
+insert into PROJECTS (PROJECT_DESCRIPTION, PROJECT_INVESTMENT)
+values ('descljgshfd', 12000);
