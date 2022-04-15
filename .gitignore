@@ -15,3 +15,6 @@ target/
 *.bak
 *.log
 *.gz
+
+# SQL
+**/tests.sql
