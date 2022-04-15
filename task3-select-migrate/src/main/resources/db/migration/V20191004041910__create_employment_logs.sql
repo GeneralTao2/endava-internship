@@ -2,7 +2,7 @@ create table employment_logs (
     employment_log_id   number(6)       primary key,
     first_name          varchar2(20),
     last_name           varchar2(25)    not null,
-    employment_action   varchar(6),
+    employment_action   varchar(5),
     constraint emp_logs_emp_act_ck check (employment_action in ('HIRED', 'FIRED'))
 );
 
