@@ -1,9 +1,9 @@
 package com.endava.internship.webapp.model;
 
 import lombok.*;
-import org.hibernate.validator.constraints.UniqueElements;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.Objects;
@@ -18,19 +18,26 @@ public class Employee {
     @Id
     @GeneratedValue
     long id;
+
     @NotBlank
     String firstName;
+
     @NotBlank
     String lastName;
+
     @ManyToOne
     Department department;
-    @UniqueElements
+
     @NotBlank
+    @Email
+    @Column(unique = true)
     String email;
-    @UniqueElements
+
     @NotBlank
+    @Column(unique = true)
     String phoneNumber;
-    @NotNull
+
+    @Column(columnDefinition = "number CHECK (salary > 1)")
     long salary;
 
     @Override
@@ -45,4 +52,5 @@ public class Employee {
     public int hashCode() {
         return Objects.hash(id, email, phoneNumber);
     }
+
 }

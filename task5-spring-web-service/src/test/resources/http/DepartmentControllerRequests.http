@@ -1,0 +1,35 @@
+
+###
+GET http://localhost:8080/departments
+
+
+###
+GET http://localhost:8080/departments/1
+
+
+###
+POST http://localhost:8080/departments
+Content-Type: application/json
+
+{
+  "id": 0,
+  "location": "l1",
+  "name": "n1",
+  "employees": []
+}
+
+###
+PUT http://localhost:8080/departments/5
+Content-Type: application/json
+
+{
+  "id": 0,
+  "location": "l11111",
+  "name": "n1222",
+  "employees": []
+}
+
+
+
+
+
