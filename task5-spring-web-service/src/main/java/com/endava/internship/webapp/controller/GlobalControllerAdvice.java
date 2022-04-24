@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolationException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toMap;
 
@@ -23,14 +24,16 @@ public class GlobalControllerAdvice {
     protected ResponseEntity<?> handleMethodArgumentNotValidException(
             HttpServletRequest request,
             MethodArgumentNotValidException ex) {
-        Map<String, String> errors = ex.getAllErrors()
+        Set<Map.Entry<String, String>> errors = ex.getAllErrors()
                 .stream()
                 .map(FieldError.class::cast)
-                .collect(toMap(
-                        FieldError::getField,
-                        fieldError -> Optional.ofNullable(fieldError.getDefaultMessage())
-                                .orElse("No default message")
-                ));
+                .map(
+                        (fieldError) -> new AbstractMap.SimpleEntry<>(
+                                fieldError.getField(),
+                                Optional.ofNullable(fieldError.getDefaultMessage())
+                                        .orElse("No default message"))
+                )
+                .collect(Collectors.toSet());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new ErrorResponse(HttpStatus.BAD_REQUEST.value(),
                         errors,

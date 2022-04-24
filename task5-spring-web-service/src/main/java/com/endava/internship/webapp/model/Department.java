@@ -21,6 +21,7 @@ public class Department {
     //@JsonValue
     @Id
     @GeneratedValue
+    @Column(name = "department_id")
     long id;
 
     @NotNull

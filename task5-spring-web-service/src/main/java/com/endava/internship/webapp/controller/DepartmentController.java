@@ -47,9 +47,5 @@ public class DepartmentController {
                 }));
     }
 
-    /*@ExceptionHandler({MethodArgumentNotValidException.class})
-    public void testHandle() {
-        System.out.println("ARIVED!!!");
-    }*/
 
 }

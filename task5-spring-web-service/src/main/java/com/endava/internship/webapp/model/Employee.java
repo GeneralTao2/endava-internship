@@ -18,6 +18,7 @@ import java.util.Objects;
 public class Employee {
     @Id
     @GeneratedValue
+    @Column(name = "employee_id")
     long id;
 
     @NotNull
@@ -29,6 +30,7 @@ public class Employee {
     String lastName;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    @JoinColumn(name = "department_id")
     Department department;
 
     @NotNull

@@ -15,6 +15,17 @@
     <artifactId>task5-spring-web-service</artifactId>
     <version>1.0-SNAPSHOT</version>
 
+    <properties>
+        <java.version>11</java.version>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+
+        <!-- Flyway -->
+        <flyway.user>hr_migration</flyway.user>
+        <flyway.password>hr_migration</flyway.password>
+        <flyway.url>jdbc:oracle:thin:@//localhost:1521/PDB</flyway.url>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -46,10 +57,22 @@
 
     </dependencies>
 
-    <properties>
-        <java.version>11</java.version>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
-    </properties>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.flywaydb</groupId>
+                <artifactId>flyway-maven-plugin</artifactId>
+                <configuration>
+                    <url>${flyway.url}</url>
+                    <user>${flyway.user}</user>
+                    <password>${flyway.password}</password>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

@@ -17,7 +17,8 @@ public class LoadDatabase {
     CommandLineRunner initDatabase(EmployeeRepository employeeRepository,
                                    DepartmentRepository departmentRepository) {
         return args -> {
-
+            employeeRepository.deleteAll();
+            departmentRepository.deleteAll();
             Department d1 = new Department(0, "a1", "b1");
             Department d2 = new Department(0, "a2", "b2");
             Department d3 = new Department(0, "a3", "b3");
