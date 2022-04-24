@@ -14,25 +14,30 @@ import java.util.Objects;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class Employee {
     @Id
     @GeneratedValue
     long id;
 
+    @NotNull
     @NotBlank
     String firstName;
 
+    @NotNull
     @NotBlank
     String lastName;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
     Department department;
 
+    @NotNull
     @NotBlank
     @Email
     @Column(unique = true)
     String email;
 
+    @NotNull
     @NotBlank
     @Column(unique = true)
     String phoneNumber;

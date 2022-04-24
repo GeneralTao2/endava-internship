@@ -1,8 +1,11 @@
 package com.endava.internship.webapp.controller;
 
+import com.endava.internship.webapp.validation.dto.DepartmentDto;
 import com.endava.internship.webapp.model.Department;
 import com.endava.internship.webapp.repository.DepartmentRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -10,35 +13,43 @@ import java.util.Optional;
 
 @RestController
 @AllArgsConstructor
+@RequestMapping("/departments")
 public class DepartmentController {
     DepartmentRepository departmentRepository;
 
-    @GetMapping("/departments")
-    List<Department> all() {
-        return departmentRepository.findAll();
+    @GetMapping()
+    ResponseEntity<List<Department>> all() {
+        return ResponseEntity.ok(departmentRepository.findAll());
     }
 
-    @GetMapping("/departments/{departmentId}")
-    Optional<Department> one(@PathVariable Long departmentId) {
-        return departmentRepository.findById(departmentId);
+    @GetMapping("/{departmentId}")
+    ResponseEntity<Optional<Department>> one(@PathVariable Long departmentId) {
+        return ResponseEntity.ok(departmentRepository.findById(departmentId));
     }
 
-    @PostMapping("/departments")
-    Department newDepartment(@RequestBody Department newDepartment) {
-        return departmentRepository.save(newDepartment);
+    @PostMapping()
+    ResponseEntity<Department> newDepartment(@RequestBody @Validated DepartmentDto newDepartment) {
+        return ResponseEntity.ok(departmentRepository.save(newDepartment.toDepartment()));
     }
 
-    @PutMapping("/departments/{departmentId}")
-    Department replaceDepartment(@RequestBody Department newDepartment,
-                                 @PathVariable Long departmentId) {
-        return departmentRepository.findById(departmentId)
+    @PutMapping("/{departmentId}")
+    ResponseEntity<Department> replaceDepartment(
+            @RequestBody @Validated DepartmentDto newDepartmentDto,
+            @PathVariable Long departmentId) {
+        return ResponseEntity.ok(departmentRepository.findById(departmentId)
                 .map(department -> {
-                    department.setLocation(newDepartment.getLocation());
-                    department.setName(newDepartment.getName());
+                    department.setLocation(newDepartmentDto.getLocation());
+                    department.setName(newDepartmentDto.getName());
                     return departmentRepository.save(department);
                 }).orElseGet(() -> {
-                    newDepartment.setId(departmentId);
-                    return departmentRepository.save(newDepartment);
-                });
+                    newDepartmentDto.setId(departmentId);
+                    return departmentRepository.save(newDepartmentDto.toDepartment());
+                }));
     }
+
+    /*@ExceptionHandler({MethodArgumentNotValidException.class})
+    public void testHandle() {
+        System.out.println("ARIVED!!!");
+    }*/
+
 }

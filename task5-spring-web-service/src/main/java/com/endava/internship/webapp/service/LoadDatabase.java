@@ -18,10 +18,10 @@ public class LoadDatabase {
                                    DepartmentRepository departmentRepository) {
         return args -> {
 
-            Department d1 = new Department(0, "a1", "b1", new ArrayList<>());
-            Department d2 = new Department(0, "a2", "b2", new ArrayList<>());
-            Department d3 = new Department(0, "a3", "b3", new ArrayList<>());
-            Department d4 = new Department(0, "a4", "b4", new ArrayList<>());
+            Department d1 = new Department(0, "a1", "b1");
+            Department d2 = new Department(0, "a2", "b2");
+            Department d3 = new Department(0, "a3", "b3");
+            Department d4 = new Department(0, "a4", "b4");
 
             Employee e1 = new Employee(0, "a1", "b1", null, "e1@g.com", "1", 5);
             Employee e2 = new Employee(0, "a2", "b2", null, "e2@g.com", "2", 2);
@@ -38,9 +38,7 @@ public class LoadDatabase {
             departmentRepository.save(d3);
             departmentRepository.save(d4);
 
-            d1.addEmployee(e1);
-            d1.addEmployee(e2);
-            d2.addEmployee(e3);
+
             departmentRepository.save(d1);
             departmentRepository.save(d2);
         };
