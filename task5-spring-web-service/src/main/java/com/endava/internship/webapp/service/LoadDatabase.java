@@ -1,14 +1,10 @@
 package com.endava.internship.webapp.service;
 
-import com.endava.internship.webapp.model.Department;
-import com.endava.internship.webapp.model.Employee;
 import com.endava.internship.webapp.repository.DepartmentRepository;
 import com.endava.internship.webapp.repository.EmployeeRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import java.util.ArrayList;
 
 @Configuration
 public class LoadDatabase {
@@ -17,7 +13,8 @@ public class LoadDatabase {
     CommandLineRunner initDatabase(EmployeeRepository employeeRepository,
                                    DepartmentRepository departmentRepository) {
         return args -> {
-            employeeRepository.deleteAll();
+            // TODO: for early test purposes
+            /*employeeRepository.deleteAll();
             departmentRepository.deleteAll();
             Department d1 = new Department(0, "a1", "b1");
             Department d2 = new Department(0, "a2", "b2");
@@ -41,7 +38,7 @@ public class LoadDatabase {
 
 
             departmentRepository.save(d1);
-            departmentRepository.save(d2);
+            departmentRepository.save(d2);*/
         };
     }
 

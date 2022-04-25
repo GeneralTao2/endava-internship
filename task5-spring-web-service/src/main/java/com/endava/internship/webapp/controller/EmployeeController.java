@@ -1,10 +1,10 @@
 package com.endava.internship.webapp.controller;
 
 import com.endava.internship.webapp.exceptions.ErrorResponse;
-import com.endava.internship.webapp.repository.DepartmentRepository;
-import com.endava.internship.webapp.validation.dto.EmployeeDto;
 import com.endava.internship.webapp.model.Employee;
+import com.endava.internship.webapp.repository.DepartmentRepository;
 import com.endava.internship.webapp.repository.EmployeeRepository;
+import com.endava.internship.webapp.validation.dto.EmployeeDto;
 import com.endava.internship.webapp.validation.validators.EmployeeValidator;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -15,8 +15,10 @@ import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBui
 import org.springframework.web.util.UriComponents;
 
 import java.net.URI;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 @RestController
 @AllArgsConstructor
@@ -45,7 +47,7 @@ public class EmployeeController {
 
         Set<Map.Entry<String, String>> errors = employeeValidator.validatePostRequestBody(newEmployeeDto);
 
-        if(errors.isEmpty()) {
+        if (errors.isEmpty()) {
             return ResponseEntity
                     .ok(employeeRepository.save(newEmployeeDto.toEmployee()));
         } else {
@@ -62,11 +64,11 @@ public class EmployeeController {
             @PathVariable Long employeeId) {
 
         URI uri = MvcUriComponentsBuilder.fromController(getClass())
-                .path("{employeeId}").build(employeeId);
+                .path("/{employeeId}").build(employeeId);
 
         Set<Map.Entry<String, String>> errors = employeeValidator.validatePutRequestBody(newEmployeeDto, employeeId);
 
-        if(errors.isEmpty()) {
+        if (errors.isEmpty()) {
             return ResponseEntity.ok(employeeRepository.findById(employeeId)
                     .map(employee -> {
                         employee.setEmail(newEmployeeDto.getEmail());
@@ -74,10 +76,18 @@ public class EmployeeController {
                         employee.setLastName(newEmployeeDto.getLastName());
                         employee.setPhoneNumber(newEmployeeDto.getPhoneNumber());
                         employee.setSalary(newEmployeeDto.getSalary());
-                        employee.setDepartment(newEmployeeDto.getDepartment());
+                        employee.setDepartment(
+                                departmentRepository.findById(newEmployeeDto.getDepartment().getId())
+                                        .orElse(null)
+                        );
                         return employeeRepository.save(employee);
                     }).orElseGet(() -> {
+                        // TODO: do not really save `employee` with id `employeeId`
                         newEmployeeDto.setId(employeeId);
+                        newEmployeeDto.setDepartment(
+                                departmentRepository.findById(newEmployeeDto.getDepartment().getId())
+                                        .orElse(null)
+                        );
                         return employeeRepository.save(newEmployeeDto.toEmployee());
                     }));
         } else {

@@ -1,6 +1,5 @@
 package com.endava.internship.webapp.validation.dto;
 
-
 import com.endava.internship.webapp.model.Department;
 import com.endava.internship.webapp.model.Employee;
 import lombok.AllArgsConstructor;

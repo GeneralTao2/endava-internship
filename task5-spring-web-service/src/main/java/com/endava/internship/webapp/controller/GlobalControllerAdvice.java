@@ -10,11 +10,11 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.ConstraintViolationException;
-import java.util.*;
+import java.util.AbstractMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
-
-import static java.util.stream.Collectors.toMap;
 
 @ControllerAdvice
 @Slf4j

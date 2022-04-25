@@ -1,8 +1,8 @@
 package com.endava.internship.webapp.controller;
 
-import com.endava.internship.webapp.validation.dto.DepartmentDto;
 import com.endava.internship.webapp.model.Department;
 import com.endava.internship.webapp.repository.DepartmentRepository;
+import com.endava.internship.webapp.validation.dto.DepartmentDto;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;

@@ -1,8 +1,5 @@
 package com.endava.internship.webapp.exceptions;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
 import lombok.Value;
 
 import java.time.LocalDateTime;

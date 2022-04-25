@@ -1,13 +1,13 @@
 package com.endava.internship.webapp.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.*;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -21,6 +21,7 @@ public class Department {
     //@JsonValue
     @Id
     @GeneratedValue
+    @SuppressWarnings("JpaDataSourceORMInspection")
     @Column(name = "department_id")
     long id;
 

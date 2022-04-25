@@ -6,7 +6,10 @@ import com.endava.internship.webapp.validation.dto.EmployeeDto;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.AbstractMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 @Component
 @AllArgsConstructor
@@ -24,14 +27,15 @@ public class EmployeeValidator {
 
     public Set<Map.Entry<String, String>> validatePostRequestBody(EmployeeDto newEmployeeDto) {
         Set<Map.Entry<String, String>> errors = new HashSet<>();
-        if(!employeeRepository.findByEmail(newEmployeeDto.getEmail()).isEmpty()) {
+        if (!employeeRepository.findByEmail(newEmployeeDto.getEmail()).isEmpty()) {
             errors.add(EMAIL_ALREADY_EXISTS);
         }
-        if(!employeeRepository.findByPhoneNumber(newEmployeeDto.getPhoneNumber())
+        if (!employeeRepository.findByPhoneNumber(newEmployeeDto.getPhoneNumber())
                 .isEmpty()) {
             errors.add(PHONE_NUMBER_ALREADY_EXISTS);
         }
-        if(!departmentRepository.existsById(newEmployeeDto.getDepartment().getId())) {
+        if (newEmployeeDto.getDepartment() == null ||
+                !departmentRepository.existsById(newEmployeeDto.getDepartment().getId())) {
             errors.add(DEPARTMENT_NOT_EXISTS);
         }
         return errors;
@@ -39,17 +43,18 @@ public class EmployeeValidator {
 
     public Set<Map.Entry<String, String>> validatePutRequestBody(EmployeeDto newEmployeeDto, Long employeeId) {
         Set<Map.Entry<String, String>> errors = new HashSet<>();
-        if(employeeRepository.findByEmail(newEmployeeDto.getEmail()).stream()
+        if (employeeRepository.findByEmail(newEmployeeDto.getEmail()).stream()
                 .anyMatch(employee -> employee.getId() != employeeId)
         ) {
             errors.add(EMAIL_ALREADY_EXISTS);
         }
-        if(employeeRepository.findByPhoneNumber(newEmployeeDto.getPhoneNumber())
+        if (employeeRepository.findByPhoneNumber(newEmployeeDto.getPhoneNumber())
                 .stream().anyMatch(employee -> employee.getId() != employeeId)
         ) {
             errors.add(PHONE_NUMBER_ALREADY_EXISTS);
         }
-        if(!departmentRepository.existsById(newEmployeeDto.getDepartment().getId())) {
+        if (newEmployeeDto.getDepartment() == null ||
+                !departmentRepository.existsById(newEmployeeDto.getDepartment().getId())) {
             errors.add(DEPARTMENT_NOT_EXISTS);
         }
         return errors;
