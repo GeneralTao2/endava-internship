@@ -2,6 +2,7 @@ package com.endava.internship.webapp.validation.dto;
 
 import com.endava.internship.webapp.model.Department;
 import com.endava.internship.webapp.model.Employee;
+import com.endava.internship.webapp.validation.constraints.ClearNotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,7 +10,6 @@ import lombok.Setter;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @AllArgsConstructor
@@ -18,28 +18,40 @@ import javax.validation.constraints.NotNull;
 @Setter
 public class EmployeeDto {
 
+    private static final String FIRST_NAME_NULL_MESSAGE = "First name cannot be null";
+    private static final String FIRST_NAME_BLANK_MESSAGE = "First name cannot be blank";
+    private static final String LAST_NAME_NULL_MESSAGE = "Last name cannot be null";
+    private static final String LAST_NAME_BLANK_MESSAGE = "Last name cannot be blank";
+    private static final String EMAIL_NULL_MESSAGE = "Email cannot be null";
+    private static final String EMAIL_NOT_BLANK = "Email cannot be blank";
+    private static final String EMAIL_NOT_WELL_FORMED = "Email must be well-formed";
+    private static final String PHONE_NUMBER_NOT_NULL = "Phone number cannot be null";
+    private static final String PHONE_NUMBER_NOT_BLANK = "Phone number cannot be blank";
+    private static final String SALARY_LESS_THEN_2 = "Salary must be greater than 1";
+    private static final String SALARY_NULL = "Salary cannot be null";
     Long id = 0L;
 
-    @NotNull(message = "First name cannot be null")
-    @NotBlank(message = "First name cannot be blank")
+    @NotNull(message = FIRST_NAME_NULL_MESSAGE)
+    @ClearNotBlank(message = FIRST_NAME_BLANK_MESSAGE)
     String firstName;
 
-    @NotNull(message = "Last name cannot be null")
-    @NotBlank(message = "Last name cannot be blank")
+    @NotNull(message = LAST_NAME_NULL_MESSAGE)
+    @ClearNotBlank(message = LAST_NAME_BLANK_MESSAGE)
     String lastName;
 
     Department department;
 
-    @NotNull(message = "Email cannot be null")
-    @NotBlank(message = "Email cannot be blank")
-    @Email(message = "Email must be well-formed")
+    @NotNull(message = EMAIL_NULL_MESSAGE)
+    @ClearNotBlank(message = EMAIL_NOT_BLANK)
+    @Email(message = EMAIL_NOT_WELL_FORMED)
     String email;
 
-    @NotNull(message = "Phone number cannot be null")
-    @NotBlank(message = "Phone number cannot be blank")
+    @NotNull(message = PHONE_NUMBER_NOT_NULL)
+    @ClearNotBlank(message = PHONE_NUMBER_NOT_BLANK)
     String phoneNumber;
 
-    @Min(value = 2, message = "Salary must be greater than 1")
+    @NotNull(message = SALARY_NULL)
+    @Min(value = 2, message = SALARY_LESS_THEN_2)
     long salary;
 
     public Employee toEmployee() {

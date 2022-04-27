@@ -5,7 +5,7 @@ import com.endava.internship.webapp.model.Employee;
 import com.endava.internship.webapp.repository.DepartmentRepository;
 import com.endava.internship.webapp.repository.EmployeeRepository;
 import com.endava.internship.webapp.validation.dto.EmployeeDto;
-import com.endava.internship.webapp.validation.validators.EmployeeValidator;
+import com.endava.internship.webapp.validation.validators.db.EmployeeValidator;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -45,7 +45,7 @@ public class EmployeeController {
         UriComponents uri = MvcUriComponentsBuilder.fromController(getClass())
                 .build();
 
-        Set<Map.Entry<String, String>> errors = employeeValidator.validatePostRequestBody(newEmployeeDto);
+        List<Map.Entry<String, String>> errors = employeeValidator.validatePostRequestBody(newEmployeeDto);
 
         if (errors.isEmpty()) {
             return ResponseEntity
@@ -66,7 +66,7 @@ public class EmployeeController {
         URI uri = MvcUriComponentsBuilder.fromController(getClass())
                 .path("/{employeeId}").build(employeeId);
 
-        Set<Map.Entry<String, String>> errors = employeeValidator.validatePutRequestBody(newEmployeeDto, employeeId);
+        List<Map.Entry<String, String>> errors = employeeValidator.validatePutRequestBody(newEmployeeDto, employeeId);
 
         if (errors.isEmpty()) {
             return ResponseEntity.ok(employeeRepository.findById(employeeId)

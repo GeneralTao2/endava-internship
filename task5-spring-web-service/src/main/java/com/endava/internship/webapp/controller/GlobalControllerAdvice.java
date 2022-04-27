@@ -10,10 +10,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.AbstractMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @ControllerAdvice
@@ -24,7 +21,7 @@ public class GlobalControllerAdvice {
     protected ResponseEntity<?> handleMethodArgumentNotValidException(
             HttpServletRequest request,
             MethodArgumentNotValidException ex) {
-        Set<Map.Entry<String, String>> errors = ex.getAllErrors()
+        List<Map.Entry<String, String>> errors = ex.getAllErrors()
                 .stream()
                 .map(FieldError.class::cast)
                 .map(
@@ -33,7 +30,7 @@ public class GlobalControllerAdvice {
                                 Optional.ofNullable(fieldError.getDefaultMessage())
                                         .orElse("No default message"))
                 )
-                .collect(Collectors.toSet());
+                .collect(Collectors.toList());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new ErrorResponse(HttpStatus.BAD_REQUEST.value(),
                         errors,

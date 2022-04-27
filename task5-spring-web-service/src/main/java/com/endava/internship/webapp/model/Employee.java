@@ -15,6 +15,7 @@ import java.util.Objects;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Table(name = "employees")
 public class Employee {
     @Id
     @GeneratedValue
