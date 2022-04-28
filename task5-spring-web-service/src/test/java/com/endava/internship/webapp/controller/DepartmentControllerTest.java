@@ -1,9 +1,9 @@
 package com.endava.internship.webapp.controller;
 
-import com.endava.internship.webapp.exceptions.ErrorResponse;
 import com.endava.internship.webapp.model.Department;
 import com.endava.internship.webapp.repository.DepartmentRepository;
 import com.endava.internship.webapp.repository.EmployeeRepository;
+import com.endava.internship.webapp.service.DepartmentService;
 import com.endava.internship.webapp.validation.dto.DepartmentDto;
 import com.endava.internship.webapp.validation.validators.db.EmployeeValidator;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -11,7 +11,9 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -27,7 +29,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest
+@AutoConfigureMockMvc
+@SpringBootTest
 class DepartmentControllerTest {
 
     @Autowired
@@ -35,15 +38,6 @@ class DepartmentControllerTest {
 
     @MockBean
     private DepartmentRepository departmentRepository;
-
-    @MockBean
-    private EmployeeRepository employeeRepository;
-
-    @MockBean
-    EmployeeValidator employeeValidator;
-
-    @Autowired
-    private DepartmentController departmentController;
 
     ObjectMapper mapper;
 
@@ -122,8 +116,8 @@ class DepartmentControllerTest {
         when(departmentRepository.save(d1)).thenReturn(d1);
 
         mockMvc.perform(post("/departments")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(d1DtoJson))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(d1DtoJson))
                 .andExpect(status().is(HttpStatus.OK.value()))
                 .andExpect(content().json(d1Json));
     }

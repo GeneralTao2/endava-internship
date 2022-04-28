@@ -1,9 +1,12 @@
 package com.endava.internship.webapp.controller;
 
+import com.endava.internship.webapp.exceptions.DepartmentNotFoundException;
 import com.endava.internship.webapp.model.Department;
 import com.endava.internship.webapp.repository.DepartmentRepository;
+import com.endava.internship.webapp.service.DepartmentService;
 import com.endava.internship.webapp.validation.dto.DepartmentDto;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -13,38 +16,33 @@ import java.util.Optional;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/departments")
+@RequestMapping("departments")
 public class DepartmentController {
-    DepartmentRepository departmentRepository;
+
+    DepartmentService departmentService;
+
 
     @GetMapping()
-    ResponseEntity<List<Department>> all() {
-        return ResponseEntity.ok(departmentRepository.findAll());
+    ResponseEntity<List<Department> > all() {
+
+        return ResponseEntity.status(200).body(departmentService.getAll());
     }
 
     @GetMapping("/{departmentId}")
-    ResponseEntity<Optional<Department>> one(@PathVariable Long departmentId) {
-        return ResponseEntity.ok(departmentRepository.findById(departmentId));
+    Department one(@PathVariable Long departmentId) {
+        return departmentService.getOne(departmentId);
     }
 
     @PostMapping()
-    ResponseEntity<Department> newDepartment(@RequestBody @Validated DepartmentDto newDepartment) {
-        return ResponseEntity.ok(departmentRepository.save(newDepartment.toDepartment()));
+    Department newDepartment(@RequestBody DepartmentDto newDepartment) {
+        return departmentService.setOne(newDepartment);
     }
 
     @PutMapping("/{departmentId}")
-    ResponseEntity<Department> replaceDepartment(
-            @RequestBody @Validated DepartmentDto newDepartmentDto,
+    Department replaceDepartment(
+            @RequestBody DepartmentDto newDepartmentDto,
             @PathVariable Long departmentId) {
-        return ResponseEntity.ok(departmentRepository.findById(departmentId)
-                .map(department -> {
-                    department.setLocation(newDepartmentDto.getLocation());
-                    department.setName(newDepartmentDto.getName());
-                    return departmentRepository.save(department);
-                }).orElseGet(() -> {
-                    newDepartmentDto.setId(departmentId);
-                    return departmentRepository.save(newDepartmentDto.toDepartment());
-                }));
+        return departmentService.replaceOne(newDepartmentDto, departmentId);
     }
 
 

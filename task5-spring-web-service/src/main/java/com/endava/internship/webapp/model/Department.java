@@ -17,8 +17,6 @@ import java.util.Objects;
 @NoArgsConstructor
 @Builder
 public class Department {
-    //TODO: advanced serialization
-    //@JsonValue
     @Id
     @GeneratedValue
     @SuppressWarnings("JpaDataSourceORMInspection")

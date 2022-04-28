@@ -1,4 +1,4 @@
-package com.endava.internship.webapp.exceptions;
+package com.endava.internship.webapp.validation.dto;
 
 import lombok.Value;
 
