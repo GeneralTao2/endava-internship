@@ -16,16 +16,16 @@ import java.util.Optional;
 
 @RestController
 @AllArgsConstructor
+@ResponseBody
+@ResponseStatus(HttpStatus.OK)
 @RequestMapping("departments")
 public class DepartmentController {
-
     DepartmentService departmentService;
 
 
     @GetMapping()
-    ResponseEntity<List<Department> > all() {
-
-        return ResponseEntity.status(200).body(departmentService.getAll());
+    List<Department> all() {
+        return departmentService.getAll();
     }
 
     @GetMapping("/{departmentId}")
@@ -34,13 +34,13 @@ public class DepartmentController {
     }
 
     @PostMapping()
-    Department newDepartment(@RequestBody DepartmentDto newDepartment) {
+    Department newDepartment(@Validated @RequestBody DepartmentDto newDepartment) {
         return departmentService.setOne(newDepartment);
     }
 
     @PutMapping("/{departmentId}")
     Department replaceDepartment(
-            @RequestBody DepartmentDto newDepartmentDto,
+            @Validated @RequestBody DepartmentDto newDepartmentDto,
             @PathVariable Long departmentId) {
         return departmentService.replaceOne(newDepartmentDto, departmentId);
     }

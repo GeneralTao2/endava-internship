@@ -28,13 +28,13 @@ public class EmployeeService {
                 .orElseThrow(() -> new EmployeeNotFoundException(employeeId));
     }
 
-    public Employee setOne(@Validated EmployeeDto newEmployeeDto) {
+    public Employee setOne(EmployeeDto newEmployeeDto) {
         employeeValidator.validatePostRequestBody(newEmployeeDto);
 
         return employeeRepository.save(newEmployeeDto.toEmployee());
     }
 
-    public Employee replaceOne(@Validated EmployeeDto newEmployeeDto, Long employeeId) {
+    public Employee replaceOne(EmployeeDto newEmployeeDto, Long employeeId) {
         employeeValidator.validatePutRequestBody(newEmployeeDto, employeeId);
 
         return employeeRepository.findById(employeeId)

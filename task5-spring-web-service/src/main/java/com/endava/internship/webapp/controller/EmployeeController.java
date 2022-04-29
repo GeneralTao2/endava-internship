@@ -29,13 +29,13 @@ public class EmployeeController {
     }
 
     @PostMapping()
-    Employee newEmployee(@RequestBody EmployeeDto newEmployeeDto) {
+    Employee newEmployee(@Validated @RequestBody EmployeeDto newEmployeeDto) {
         return employeeService.setOne(newEmployeeDto);
     }
 
     @PutMapping("/{employeeId}")
     Employee replaceEmployee(
-            @RequestBody EmployeeDto newEmployeeDto,
+            @Validated @RequestBody EmployeeDto newEmployeeDto,
             @PathVariable Long employeeId) {
 
         return employeeService.replaceOne(newEmployeeDto, employeeId);

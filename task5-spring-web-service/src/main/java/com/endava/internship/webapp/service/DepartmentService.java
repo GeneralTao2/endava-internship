@@ -25,11 +25,11 @@ public class DepartmentService {
         );
     }
 
-    public Department setOne(@Validated DepartmentDto department) {
+    public Department setOne(DepartmentDto department) {
         return departmentRepository.save(department.toDepartment());
     }
 
-    public Department replaceOne(@Validated DepartmentDto newDepartment, Long departmentId) {
+    public Department replaceOne(DepartmentDto newDepartment, Long departmentId) {
         return departmentRepository.findById(departmentId)
                 .map(department -> {
                     department.setLocation(newDepartment.getLocation());

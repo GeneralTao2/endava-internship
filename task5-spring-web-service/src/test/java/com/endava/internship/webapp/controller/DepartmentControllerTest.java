@@ -2,27 +2,27 @@ package com.endava.internship.webapp.controller;
 
 import com.endava.internship.webapp.model.Department;
 import com.endava.internship.webapp.repository.DepartmentRepository;
-import com.endava.internship.webapp.repository.EmployeeRepository;
-import com.endava.internship.webapp.service.DepartmentService;
 import com.endava.internship.webapp.validation.dto.DepartmentDto;
-import com.endava.internship.webapp.validation.validators.db.EmployeeValidator;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import javax.persistence.EntityManager;
 import java.util.*;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -47,6 +47,7 @@ class DepartmentControllerTest {
         reset(departmentRepository);
         mapper = new ObjectMapper();
         mapper.findAndRegisterModules();
+        //Mockito.when(METHOD_EXPECTED_TO_BE_CALLED).thenReturn(AnyObjectoftheReturnType);
     }
 
     @AfterEach
@@ -95,14 +96,16 @@ class DepartmentControllerTest {
     }
 
     @Test
-    void one_NoDepartment_ReturnNullString() throws Exception {
+    void one_NoDepartment_ReturnErrorResponse() throws Exception {
         long d1Id = 1L;
+        int status = HttpStatus.NOT_FOUND.value();
 
         when(departmentRepository.findById(d1Id)).thenReturn(Optional.empty());
 
         mockMvc.perform(get("/departments/" + d1Id))
-                .andExpect(status().is(HttpStatus.OK.value()))
-                .andExpect(content().string("null"));
+                .andExpect(status().is(status))
+                .andExpect(jsonPath("$.status", equalTo(status)))
+                .andExpect(jsonPath("$.errors[0].department", containsString(String.valueOf(d1Id))));
     }
 
     @Test
@@ -122,12 +125,12 @@ class DepartmentControllerTest {
                 .andExpect(content().json(d1Json));
     }
 
+    //TODO: https://www.baeldung.com/parameterized-tests-junit-5
     @Test
     void newDepartment_SaveDepartmentWithNullField_ReturnErrorResponse()
             throws Exception {
-        DepartmentDto d1Dto = new DepartmentDto(1L, null, null);
-        Department d1 = d1Dto.toDepartment();
-        String d1DtoJson = mapper.writeValueAsString(d1Dto);
+        Department d1 = new Department(1L, null, null);
+        String d1Json = mapper.writeValueAsString(d1);
         String path = "/departments";
         int status = HttpStatus.BAD_REQUEST.value();
         List<Map.Entry<String, String>> errors = List.of(
@@ -136,20 +139,51 @@ class DepartmentControllerTest {
         );
         String errorJson = mapper.writeValueAsString(errors);
 
-        System.out.println(errorJson);
+        when(departmentRepository.save(d1)).thenReturn(d1);
+
+        mockMvc.perform(post(path)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(d1Json))
+                .andExpect(status().is(HttpStatus.BAD_REQUEST.value()))
+                .andExpect(jsonPath("$.status", equalTo(status)))
+                .andExpect(content().string(containsString(errorJson)));
+    }
+
+    @Test
+    void newDepartment_SaveDepartmentWithBlankField_ReturnErrorResponse()
+            throws Exception {
+        Department d1 = new Department(1L, "", "");
+        String d1Json = mapper.writeValueAsString(d1);
+        String path = "/departments";
+        int status = HttpStatus.BAD_REQUEST.value();
+        List<Map.Entry<String, String>> errors = List.of(
+                new AbstractMap.SimpleEntry<>("location", DepartmentDto.LOCATION_BLANK_MESSAGE),
+                new AbstractMap.SimpleEntry<>("name", DepartmentDto.NAME_BLANK_MESSAGE)
+        );
+        String errorJson = mapper.writeValueAsString(errors);
 
         when(departmentRepository.save(d1)).thenReturn(d1);
 
         mockMvc.perform(post(path)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(d1DtoJson))
+                        .content(d1Json))
                 .andExpect(status().is(HttpStatus.BAD_REQUEST.value()))
                 .andExpect(jsonPath("$.status", equalTo(status)))
-                // TODO: Problem
-                .andExpect(jsonPath("$.errors", equalTo(errorJson)));
+                .andExpect(content().string(containsString(errorJson)));
     }
 
     @Test
-    void replaceDepartment() {
+    void replaceDepartment_ReplaceExistingDepartmentWithGoodDepartment_ReturnIt() throws Exception {
+        long d1Id = 1L;
+        Department d1 = new Department(d1Id, "a1", "b1");
+        String d1Json = mapper.writeValueAsString(d1);
+
+        when(departmentRepository.save(d1)).thenReturn(d1);
+
+        mockMvc.perform(post("/departments/"+d1Id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(d1Json))
+                .andExpect(status().is(HttpStatus.OK.value()))
+                .andExpect(content().json(d1Json));
     }
 }
