@@ -35,6 +35,7 @@ public class DepartmentController {
 
     @PostMapping()
     Department newDepartment(@Validated @RequestBody DepartmentDto newDepartment) {
+        System.out.println(newDepartment);
         return departmentService.setOne(newDepartment);
     }
 

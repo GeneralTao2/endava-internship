@@ -11,6 +11,7 @@ import lombok.Setter;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.util.Objects;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -64,5 +65,18 @@ public class EmployeeDto {
                 .phoneNumber(getPhoneNumber())
                 .salary(getSalary())
                 .build();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        EmployeeDto employee = (EmployeeDto) o;
+        return id == employee.id && salary == employee.salary && firstName.equals(employee.firstName) && lastName.equals(employee.lastName) && department.equals(employee.department) && email.equals(employee.email) && phoneNumber.equals(employee.phoneNumber);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, email, phoneNumber);
     }
 }
