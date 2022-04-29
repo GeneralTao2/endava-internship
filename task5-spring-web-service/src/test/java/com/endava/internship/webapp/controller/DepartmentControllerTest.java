@@ -29,8 +29,7 @@ import java.util.*;
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest
@@ -135,62 +134,108 @@ class DepartmentControllerTest {
     @Test
     void newDepartment_SaveDepartmentWithNullField_ReturnErrorResponse()
             throws Exception {
-        DepartmentDto d1Dto = new DepartmentDto(1L, null, null);
-        Department d1 =
+        DepartmentDto d1Dto = new DepartmentDto(0L, null, null);
+        Department d1 = d1Dto.toDepartment();
         String d1Json = mapper.writeValueAsString(d1);
         String path = "/departments";
         int status = HttpStatus.BAD_REQUEST.value();
-        List<Map.Entry<String, String>> errors = List.of(
-                new AbstractMap.SimpleEntry<>("location", DepartmentDto.LOCATION_NULL_MESSAGE),
-                new AbstractMap.SimpleEntry<>("name", DepartmentDto.NAME_NULL_MESSAGE)
-        );
-        String errorJson = mapper.writeValueAsString(errors);
-
-        when(departmentService.setOne(d1)).thenReturn(d1);
 
         mockMvc.perform(post(path)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(d1Json))
-                .andExpect(status().is(HttpStatus.BAD_REQUEST.value()))
+                .andExpect(status().is(status))
                 .andExpect(jsonPath("$.status", equalTo(status)))
-                .andExpect(content().string(containsString(errorJson)));
+                .andExpect(content().string(containsString(DepartmentDto.NAME_NULL_MESSAGE)))
+                .andExpect(content().string(containsString(DepartmentDto.LOCATION_NULL_MESSAGE)));
     }
 
     @Test
     void newDepartment_SaveDepartmentWithBlankField_ReturnErrorResponse()
             throws Exception {
-        Department d1 = new Department(1L, "", "");
+        DepartmentDto d1Dto = new DepartmentDto(1L, "", "");
+        Department d1 = d1Dto.toDepartment();
         String d1Json = mapper.writeValueAsString(d1);
         String path = "/departments";
         int status = HttpStatus.BAD_REQUEST.value();
-        List<Map.Entry<String, String>> errors = List.of(
-                new AbstractMap.SimpleEntry<>("location", DepartmentDto.LOCATION_BLANK_MESSAGE),
-                new AbstractMap.SimpleEntry<>("name", DepartmentDto.NAME_BLANK_MESSAGE)
-        );
-        String errorJson = mapper.writeValueAsString(errors);
-
-        when(departmentRepository.save(d1)).thenReturn(d1);
 
         mockMvc.perform(post(path)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(d1Json))
-                .andExpect(status().is(HttpStatus.BAD_REQUEST.value()))
+                .andExpect(status().is(status))
                 .andExpect(jsonPath("$.status", equalTo(status)))
-                .andExpect(content().string(containsString(errorJson)));
+                .andExpect(content().string(containsString(DepartmentDto.NAME_BLANK_MESSAGE)))
+                .andExpect(content().string(containsString(DepartmentDto.LOCATION_BLANK_MESSAGE)));
     }
 
     @Test
     void replaceDepartment_ReplaceExistingDepartmentWithGoodDepartment_ReturnIt() throws Exception {
         long d1Id = 1L;
-        Department d1 = new Department(d1Id, "a1", "b1");
+        DepartmentDto d1Dto = new DepartmentDto(d1Id, "a1", "b1");
+        Department d1 = d1Dto.toDepartment();
         String d1Json = mapper.writeValueAsString(d1);
 
-        when(departmentRepository.save(d1)).thenReturn(d1);
+        when(departmentService.replaceOne(d1Dto, d1Id)).thenReturn(d1);
 
-        mockMvc.perform(post("/departments/"+d1Id)
+        mockMvc.perform(put("/departments/"+d1Id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(d1Json))
                 .andExpect(status().is(HttpStatus.OK.value()))
                 .andExpect(content().json(d1Json));
+    }
+
+    @Test
+    void replaceDepartment_ReplaceNotExistingDepartmentWithGoodDepartment_ReturnErrorResponse() throws Exception {
+        long notExistingId = 99999L;
+        DepartmentDto d1Dto = new DepartmentDto(0L, "a1", "b1");
+        Department d1 = d1Dto.toDepartment();
+        String d1Json = mapper.writeValueAsString(d1);
+        int status = HttpStatus.NOT_FOUND.value();
+        String path = "/departments/" + notExistingId;
+
+        when(departmentService.replaceOne(d1Dto, notExistingId))
+                .thenThrow(new DepartmentNotFoundException(notExistingId));
+
+        mockMvc.perform(put(path)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(d1Json))
+                .andExpect(status().is(status))
+                .andExpect(jsonPath("$.status", equalTo(status)))
+                .andExpect(jsonPath("$.errors[0].department", containsString(String.valueOf(notExistingId))));
+    }
+
+    @Test
+    void replaceDepartment_ReplaceExistingDepartmentWithNullFiledDepartment_ReturnError() throws Exception {
+        long d1Id = 1L;
+        DepartmentDto d1Dto = new DepartmentDto(0L, null, null);
+        Department d1 = d1Dto.toDepartment();
+        String d1Json = mapper.writeValueAsString(d1);
+        String path = "/departments/" + d1Id;
+        int status = HttpStatus.BAD_REQUEST.value();
+
+        mockMvc.perform(put(path)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(d1Json))
+                .andExpect(status().is(status))
+                .andExpect(jsonPath("$.status", equalTo(status)))
+                .andExpect(content().string(containsString(DepartmentDto.NAME_NULL_MESSAGE)))
+                .andExpect(content().string(containsString(DepartmentDto.LOCATION_NULL_MESSAGE)));
+    }
+
+    @Test
+    void replaceDepartment_ReplaceExistingDepartmentWithBlankFiledDepartment_ReturnError() throws Exception {
+        long d1Id = 1L;
+        DepartmentDto d1Dto = new DepartmentDto(0L, "", "");
+        Department d1 = d1Dto.toDepartment();
+        String d1Json = mapper.writeValueAsString(d1);
+        String path = "/departments/" + d1Id;
+        int status = HttpStatus.BAD_REQUEST.value();
+
+        mockMvc.perform(put(path)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(d1Json))
+                .andExpect(status().is(status))
+                .andExpect(jsonPath("$.status", equalTo(status)))
+                .andExpect(content().string(containsString(DepartmentDto.NAME_BLANK_MESSAGE)))
+                .andExpect(content().string(containsString(DepartmentDto.LOCATION_BLANK_MESSAGE)));
     }
 }
