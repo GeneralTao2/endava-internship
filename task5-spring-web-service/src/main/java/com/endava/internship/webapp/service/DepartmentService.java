@@ -6,7 +6,6 @@ import com.endava.internship.webapp.repository.DepartmentRepository;
 import com.endava.internship.webapp.validation.dto.DepartmentDto;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
-import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
 

@@ -5,7 +5,6 @@ import lombok.Value;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 @Value
 public class ErrorResponse {

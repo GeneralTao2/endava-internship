@@ -8,7 +8,10 @@ import com.endava.internship.webapp.validation.dto.EmployeeDto;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.AbstractMap;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 @Component
 @AllArgsConstructor
@@ -33,7 +36,7 @@ public class EmployeeValidator {
         if (thereIsEmployeeWithPhoneNumber(newEmployeeDto.getPhoneNumber())) {
             errors.add(PHONE_NUMBER_ALREADY_EXISTS);
         }
-        if (departmentExists(newEmployeeDto.getDepartment())) {
+        if (departmentNotExist(newEmployeeDto.getDepartment())) {
             errors.add(DEPARTMENT_NOT_EXISTS);
         }
 
@@ -52,7 +55,7 @@ public class EmployeeValidator {
         if (thereIsOtherEmployeeWithPhoneNumber(newEmployeeDto.getPhoneNumber(), employeeId)) {
             errors.add(PHONE_NUMBER_ALREADY_EXISTS);
         }
-        if (departmentExists(newEmployeeDto.getDepartment())) {
+        if (departmentNotExist(newEmployeeDto.getDepartment())) {
             errors.add(DEPARTMENT_NOT_EXISTS);
         }
 
@@ -61,7 +64,7 @@ public class EmployeeValidator {
         }
     }
 
-    private boolean departmentExists(Department department) {
+    private boolean departmentNotExist(Department department) {
         return department == null ||
                 !departmentRepository.existsById(department.getId());
     }

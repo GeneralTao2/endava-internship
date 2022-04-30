@@ -2,31 +2,24 @@ package com.endava.internship.webapp.controller;
 
 import com.endava.internship.webapp.exceptions.DepartmentNotFoundException;
 import com.endava.internship.webapp.model.Department;
-import com.endava.internship.webapp.repository.DepartmentRepository;
 import com.endava.internship.webapp.service.DepartmentService;
 import com.endava.internship.webapp.service.EmployeeService;
 import com.endava.internship.webapp.validation.dto.DepartmentDto;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import javax.persistence.EntityManager;
-import java.util.*;
+import java.util.List;
 
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -104,7 +97,7 @@ class DepartmentControllerTest {
         int status = HttpStatus.NOT_FOUND.value();
 
         when(departmentService.getOne(d1Id)).thenThrow(
-            new DepartmentNotFoundException(d1Id)
+                new DepartmentNotFoundException(d1Id)
         );
 
         mockMvc.perform(get("/departments/" + d1Id))
@@ -176,7 +169,7 @@ class DepartmentControllerTest {
 
         when(departmentService.replaceOne(d1Dto, d1Id)).thenReturn(d1);
 
-        mockMvc.perform(put("/departments/"+d1Id)
+        mockMvc.perform(put("/departments/" + d1Id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(d1Json))
                 .andExpect(status().is(HttpStatus.OK.value()))

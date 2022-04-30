@@ -8,6 +8,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
+@SuppressWarnings("JpaDataSourceORMInspection")
 @Entity
 @Getter
 @Setter
@@ -45,19 +46,18 @@ public class Employee {
     String phoneNumber;
 
     @Column(columnDefinition = "number CHECK (salary > 1)")
-    long salary;
+    Long salary;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Employee employee = (Employee) o;
-        return id == employee.id && salary == employee.salary && firstName.equals(employee.firstName) && lastName.equals(employee.lastName) && department.equals(employee.department) && email.equals(employee.email) && phoneNumber.equals(employee.phoneNumber);
+        return id == employee.id && Objects.equals(salary, employee.salary) && firstName.equals(employee.firstName) && lastName.equals(employee.lastName) && department.equals(employee.department) && email.equals(employee.email) && phoneNumber.equals(employee.phoneNumber);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(id, email, phoneNumber);
     }
-
 }

@@ -8,7 +8,6 @@ import com.endava.internship.webapp.validation.dto.EmployeeDto;
 import com.endava.internship.webapp.validation.validators.db.EmployeeValidator;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
 
