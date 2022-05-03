@@ -1,0 +1,51 @@
+
+###
+GET http://localhost:8080/employees
+
+###
+GET http://localhost:8080/employees/1
+
+###
+POST http://localhost:8080/employees
+Content-Type: application/json
+
+{
+  "id": 0,
+  "firstName": "a1",
+  "lastName": "b1",
+  "department": 7,
+  "email": "e1@g.com22",
+  "phoneNumber": "122",
+  "salary": 2
+}
+
+###
+POST http://localhost:8080/employees
+Content-Type: application/json
+
+{
+  "id": 0,
+  "firstName": "a1",
+  "lastName": "b1",
+  "department": 7,
+  "email": "e1@g.com2224",
+  "phoneNumber": "12224",
+  "salary": 11
+}
+
+###
+PUT http://localhost:8080/employees/3
+Content-Type: application/json
+
+{
+  "id": 0,
+  "firstName": "a1",
+  "lastName": "b1",
+  "department": {
+    "id": 7
+  },
+  "email": "e1@g.com22",
+  "phoneNumber": "1222",
+  "salary": 1
+}
+
