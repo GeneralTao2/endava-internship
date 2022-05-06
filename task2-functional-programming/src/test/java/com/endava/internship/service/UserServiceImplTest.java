@@ -5,7 +5,7 @@ import com.endava.internship.domain.Privilege;
 import com.endava.internship.domain.User;
 import com.endava.internship.service.UserService;
 import com.endava.internship.service.UserServiceImpl;
-import org.junit.jupiter.api.Test;
+import org.testng.annotations.Test;
 
 import java.util.List;
 import java.util.Map;
