@@ -5,6 +5,7 @@ import com.endava.internship.webapp.service.DepartmentService;
 import com.endava.internship.webapp.validation.dto.DepartmentDto;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,8 +21,11 @@ public class DepartmentController {
 
 
     @GetMapping()
-    List<Department> all() {
-        return departmentService.getAll();
+    List<Department> all(Model model) {
+        List<Department> departmentList = departmentService.getAll();
+        //TODO: how to deal
+        model.addAttribute("departmentList", departmentList);
+        return departmentList;
     }
 
     @GetMapping("/{departmentId}")
