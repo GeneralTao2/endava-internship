@@ -1,6 +1,6 @@
 package com.endava.internship.webapp.validation.validators.constraint;
 
-import com.endava.internship.webapp.validation.constraints.ClearNotBlank;
+import com.endava.internship.webapp.validation.validators.annotations.ClearNotBlank;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;

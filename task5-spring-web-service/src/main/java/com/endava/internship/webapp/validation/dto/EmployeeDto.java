@@ -2,7 +2,7 @@ package com.endava.internship.webapp.validation.dto;
 
 import com.endava.internship.webapp.model.Department;
 import com.endava.internship.webapp.model.Employee;
-import com.endava.internship.webapp.validation.constraints.ClearNotBlank;
+import com.endava.internship.webapp.validation.validators.annotations.ClearNotBlank;
 import lombok.*;
 
 import javax.validation.constraints.Email;
@@ -69,14 +69,12 @@ public class EmployeeDto {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        EmployeeDto employee = (EmployeeDto) o;
-        return Objects.equals(id, employee.id) && Objects.equals(salary, employee.salary) && firstName.equals(employee.firstName) && lastName.equals(employee.lastName) && department.equals(employee.department) && email.equals(employee.email) && phoneNumber.equals(employee.phoneNumber);
+        EmployeeDto that = (EmployeeDto) o;
+        return id.equals(that.id) && firstName.equals(that.firstName) && lastName.equals(that.lastName) && Objects.equals(department, that.department) && email.equals(that.email) && phoneNumber.equals(that.phoneNumber) && salary.equals(that.salary);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(id, email, phoneNumber);
     }
-
-
 }

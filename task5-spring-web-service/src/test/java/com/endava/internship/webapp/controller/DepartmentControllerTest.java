@@ -123,7 +123,6 @@ class DepartmentControllerTest {
                 .andExpect(content().json(d1Json));
     }
 
-    //TODO: https://www.baeldung.com/parameterized-tests-junit-5
     @Test
     void newDepartment_SaveDepartmentWithNullField_ReturnErrorResponse()
             throws Exception {

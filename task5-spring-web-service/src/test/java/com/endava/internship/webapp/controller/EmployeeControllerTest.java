@@ -1,5 +1,6 @@
 package com.endava.internship.webapp.controller;
 
+import com.endava.internship.webapp.exceptions.DtoDbFieldsNotValidException;
 import com.endava.internship.webapp.exceptions.EmployeeNotFoundException;
 import com.endava.internship.webapp.model.Department;
 import com.endava.internship.webapp.model.Employee;
@@ -7,6 +8,7 @@ import com.endava.internship.webapp.repository.EmployeeRepository;
 import com.endava.internship.webapp.service.DepartmentService;
 import com.endava.internship.webapp.service.EmployeeService;
 import com.endava.internship.webapp.validation.dto.EmployeeDto;
+import com.endava.internship.webapp.validation.dto.ErrorResponse;
 import com.endava.internship.webapp.validation.validators.db.EmployeeValidator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,17 +17,24 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.validation.BeanPropertyBindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Stream;
 
 import static org.hamcrest.Matchers.*;
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.assertj.core.api.Assertions.*;
 
 @WebMvcTest
 class EmployeeControllerTest {
@@ -138,9 +147,6 @@ class EmployeeControllerTest {
                         .content(e1DtoJson))
                 .andExpect(status().is(HttpStatus.OK.value()))
                 .andExpect(content().json(e1Json));
-
-        //TODO: doesnt work
-        //verify(employeeValidator).validatePostRequestBody(e1Dto);
     }
 
     @Test
@@ -204,39 +210,64 @@ class EmployeeControllerTest {
     }
 
     @Test
-    @Disabled
-    void newEmployee_addBadUniqueFieldEmployee_returnErrorResponse() throws Exception {
+    void newEmployee_addBadEmployeeWithUniqueField_returnErrorResponse() throws Exception {
         Department d1 = new Department(1L, "f1", "f2");
         EmployeeDto e1Dto = new EmployeeDto(1L, "a1", "b1",
-                d1, "f@f.f", "123", 1L);
+                d1, "f@f.f", "123", 2L);
         String e1DtoJson = mapper.writeValueAsString(e1Dto);
         String path = "/employees";
         int status = HttpStatus.BAD_REQUEST.value();
 
-        //TODO: Can I even do this? (doest work anyway)
-        /*
-        doThrow(new MethodArgumentNotValidException(new MethodParameter(getClass().getMethod("blankMethod"), -1),
-                new BeanPropertyBindingResult(null, "Test") {{
-                    Stream.of(
-                                    EmployeeValidator.PHONE_NUMBER_ALREADY_EXISTS,
-                                    EmployeeValidator.EMAIL_ALREADY_EXISTS
-                            )
-                            .map(errorEntry -> new FieldError(
-                                    "null",
-                                    errorEntry.getKey(),
-                                    errorEntry.getValue()))
-                            .forEach(this::addError);
-                }}
-        )).when(employeeValidator).validatePostRequestBody(e1Dto);*/
+        when(employeeService.setOne(e1Dto)).thenThrow(new DtoDbFieldsNotValidException(List.of(
+                EmployeeValidator.PHONE_NUMBER_ALREADY_EXISTS,
+                EmployeeValidator.EMAIL_ALREADY_EXISTS
+        )));
 
-        mockMvc.perform(post(path)
+
+        MockHttpServletResponse response = mockMvc.perform(post(path)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(e1DtoJson))
+                .andReturn()
+                .getResponse();
+
+        String body = response.getContentAsString();
+        ErrorResponse errorResponse = mapper.readValue(body, ErrorResponse.class);
+
+        assertThat(errorResponse.getStatus()).isEqualTo(status);
+        assertThat(errorResponse.getErrors()).containsAll(Set.of(
+                        EmployeeValidator.PHONE_NUMBER_ALREADY_EXISTS,
+                        EmployeeValidator.EMAIL_ALREADY_EXISTS
+                        ))
+                .hasSize(2);
+    }
+
+    @Test
+    void newEmployee_addBadEmployeeWithNullDepartmentField_returnErrorResponse() throws Exception {
+        EmployeeDto e1Dto = new EmployeeDto(1L, "a1", "b1",
+                null, "f@f.f", "123", 2L);
+        String e1DtoJson = mapper.writeValueAsString(e1Dto);
+        String path = "/employees";
+        int status = HttpStatus.BAD_REQUEST.value();
+
+        when(employeeService.setOne(e1Dto)).thenThrow(new DtoDbFieldsNotValidException(List.of(
+                EmployeeValidator.DEPARTMENT_NOT_EXISTS
+        )));
+
+
+        MockHttpServletResponse response = mockMvc.perform(post(path)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(e1DtoJson))
-                .andExpect(status().is(status))
-                .andExpect(jsonPath("$.status", equalTo(status)))
-                .andExpect(content().string(containsString(EmployeeValidator.PHONE_NUMBER_ALREADY_EXISTS.getValue())))
-                .andExpect(content().string(containsString(EmployeeValidator.EMAIL_ALREADY_EXISTS.getValue())))
-                .andExpect(jsonPath("$.errors", hasSize(2)));
+                .andReturn()
+                .getResponse();
+
+        String body = response.getContentAsString();
+        ErrorResponse errorResponse = mapper.readValue(body, ErrorResponse.class);
+
+        assertThat(errorResponse.getStatus()).isEqualTo(status);
+        assertThat(errorResponse.getErrors()).containsAll(Set.of(
+                        EmployeeValidator.DEPARTMENT_NOT_EXISTS
+                ))
+                .hasSize(1);
     }
 
     @Test
@@ -327,5 +358,69 @@ class EmployeeControllerTest {
                 .andExpect(content().string(containsString(EmployeeDto.PHONE_NUMBER_BLANK_MESSAGE)))
                 .andExpect(content().string(containsString(EmployeeDto.EMAIL_BLANK_MESSAGE)))
                 .andExpect(jsonPath("$.errors", hasSize(4)));
+    }
+
+    @Test
+    void replaceEmployee_BadEmployeeWithUniqueField_returnErrorResponse() throws Exception {
+        long e1Id = 1L;
+        Department d1 = new Department(1L, "f1", "f2");
+        EmployeeDto e1Dto = new EmployeeDto(1L, "a1", "b1",
+                d1, "f@f.f", "123", 2L);
+        String e1DtoJson = mapper.writeValueAsString(e1Dto);
+        String path = "/employees/" + e1Id;
+        int status = HttpStatus.BAD_REQUEST.value();
+
+        when(employeeService.replaceOne(e1Dto, e1Id)).thenThrow(new DtoDbFieldsNotValidException(List.of(
+                EmployeeValidator.PHONE_NUMBER_ALREADY_EXISTS,
+                EmployeeValidator.EMAIL_ALREADY_EXISTS
+        )));
+
+
+        MockHttpServletResponse response = mockMvc.perform(put(path)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(e1DtoJson))
+                .andReturn()
+                .getResponse();
+
+        String body = response.getContentAsString();
+        ErrorResponse errorResponse = mapper.readValue(body, ErrorResponse.class);
+
+        assertThat(errorResponse.getStatus()).isEqualTo(status);
+        assertThat(errorResponse.getErrors()).containsAll(Set.of(
+                        EmployeeValidator.PHONE_NUMBER_ALREADY_EXISTS,
+                        EmployeeValidator.EMAIL_ALREADY_EXISTS
+                ))
+                .hasSize(2);
+    }
+
+    @Test
+    void replaceEmployee_BadEmployeeNullDepartmentField_returnErrorResponse() throws Exception {
+        long e1Id = 1L;
+        Department d1 = new Department(1L, "f1", "f2");
+        EmployeeDto e1Dto = new EmployeeDto(1L, "a1", "b1",
+                d1, "f@f.f", "123", 2L);
+        String e1DtoJson = mapper.writeValueAsString(e1Dto);
+        String path = "/employees/" + e1Id;
+        int status = HttpStatus.BAD_REQUEST.value();
+
+        when(employeeService.replaceOne(e1Dto, e1Id)).thenThrow(new DtoDbFieldsNotValidException(List.of(
+                EmployeeValidator.DEPARTMENT_NOT_EXISTS
+        )));
+
+
+        MockHttpServletResponse response = mockMvc.perform(put(path)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(e1DtoJson))
+                .andReturn()
+                .getResponse();
+
+        String body = response.getContentAsString();
+        ErrorResponse errorResponse = mapper.readValue(body, ErrorResponse.class);
+
+        assertThat(errorResponse.getStatus()).isEqualTo(status);
+        assertThat(errorResponse.getErrors()).containsAll(Set.of(
+                        EmployeeValidator.DEPARTMENT_NOT_EXISTS
+                ))
+                .hasSize(1);
     }
 }

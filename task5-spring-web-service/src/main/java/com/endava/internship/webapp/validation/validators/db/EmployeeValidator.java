@@ -77,8 +77,8 @@ public class EmployeeValidator {
         return !employeeRepository.findByEmail(email).isEmpty();
     }
 
-    private boolean thereIsOtherEmployeeWithPhoneNumber(String email, Long employeeId) {
-        return employeeRepository.findByPhoneNumber(email)
+    private boolean thereIsOtherEmployeeWithPhoneNumber(String phoneNumber, Long employeeId) {
+        return employeeRepository.findByPhoneNumber(phoneNumber)
                 .stream().anyMatch(employee -> employee.getId() != employeeId);
     }
 

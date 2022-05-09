@@ -1,7 +1,7 @@
 package com.endava.internship.webapp.validation.dto;
 
 import com.endava.internship.webapp.model.Department;
-import com.endava.internship.webapp.validation.constraints.ClearNotBlank;
+import com.endava.internship.webapp.validation.validators.annotations.ClearNotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -1,4 +1,4 @@
-package com.endava.internship.webapp.validation.constraints;
+package com.endava.internship.webapp.validation.validators.annotations;
 
 
 import com.endava.internship.webapp.validation.validators.constraint.ClearNotBlankValidator;
