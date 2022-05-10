@@ -6,8 +6,7 @@ import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
 public class ClearNotBlankValidator implements
-        ConstraintValidator<ClearNotBlank, String>
-{
+        ConstraintValidator<ClearNotBlank, String> {
     @Override
     public void initialize(ClearNotBlank constraintAnnotation) {
         ConstraintValidator.super.initialize(constraintAnnotation);

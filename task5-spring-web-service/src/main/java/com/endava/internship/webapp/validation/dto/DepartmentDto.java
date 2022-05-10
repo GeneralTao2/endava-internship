@@ -16,10 +16,10 @@ import java.util.Objects;
 @Setter
 public class DepartmentDto {
 
-    public final static String NAME_NULL_MESSAGE =  "The name cannot be null";
-    public final static String NAME_BLANK_MESSAGE =  "The name cannot be blank";
-    public final static String LOCATION_NULL_MESSAGE =  "The location cannot be null";
-    public final static String LOCATION_BLANK_MESSAGE =  "The location cannot be blank";
+    public final static String NAME_NULL_MESSAGE = "The name cannot be null";
+    public final static String NAME_BLANK_MESSAGE = "The name cannot be blank";
+    public final static String LOCATION_NULL_MESSAGE = "The location cannot be null";
+    public final static String LOCATION_BLANK_MESSAGE = "The location cannot be blank";
 
     Long id = 0L;
 

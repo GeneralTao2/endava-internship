@@ -12,29 +12,24 @@ import com.endava.internship.webapp.validation.dto.ErrorResponse;
 import com.endava.internship.webapp.validation.validators.db.EmployeeValidator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.validation.BeanPropertyBindingResult;
-import org.springframework.validation.FieldError;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Stream;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.assertj.core.api.Assertions.*;
 
 @WebMvcTest
 class EmployeeControllerTest {
@@ -225,8 +220,8 @@ class EmployeeControllerTest {
 
 
         MockHttpServletResponse response = mockMvc.perform(post(path)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(e1DtoJson))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(e1DtoJson))
                 .andReturn()
                 .getResponse();
 
@@ -237,7 +232,7 @@ class EmployeeControllerTest {
         assertThat(errorResponse.getErrors()).containsAll(Set.of(
                         EmployeeValidator.PHONE_NUMBER_ALREADY_EXISTS,
                         EmployeeValidator.EMAIL_ALREADY_EXISTS
-                        ))
+                ))
                 .hasSize(2);
     }
 

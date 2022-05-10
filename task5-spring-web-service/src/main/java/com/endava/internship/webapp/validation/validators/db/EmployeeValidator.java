@@ -40,7 +40,7 @@ public class EmployeeValidator {
             errors.add(DEPARTMENT_NOT_EXISTS);
         }
 
-        if(!errors.isEmpty()) {
+        if (!errors.isEmpty()) {
             throw new DtoDbFieldsNotValidException(errors);
         }
     }
@@ -59,7 +59,7 @@ public class EmployeeValidator {
             errors.add(DEPARTMENT_NOT_EXISTS);
         }
 
-        if(!errors.isEmpty()) {
+        if (!errors.isEmpty()) {
             throw new DtoDbFieldsNotValidException(errors);
         }
     }

@@ -6,22 +6,18 @@ import com.endava.internship.webapp.model.Employee;
 import com.endava.internship.webapp.repository.DepartmentRepository;
 import com.endava.internship.webapp.repository.EmployeeRepository;
 import com.endava.internship.webapp.validation.dto.EmployeeDto;
-import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.assertThatNoException;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class EmployeeValidatorTest {
@@ -43,7 +39,7 @@ class EmployeeValidatorTest {
     @Test
     void validatePostRequestBody_EmployeeIsValid_ThrowsNoException() {
         Department d1 = new Department(1L, "a1", "a2");
-        EmployeeDto e1Dto = new EmployeeDto(1L, "a1", "b1",d1,
+        EmployeeDto e1Dto = new EmployeeDto(1L, "a1", "b1", d1,
                 "e@w.w1", "123", 2L);
 
         when(departmentRepository.existsById(d1.getId())).thenReturn(true);
@@ -56,9 +52,9 @@ class EmployeeValidatorTest {
     @Test
     void validatePostRequestBody_EmployeeWithNotUniqueFields_ThrowsException() {
         Department d1 = new Department(1L, "a1", "a2");
-        EmployeeDto e1Dto = new EmployeeDto(1L, "a1", "b1",d1,
+        EmployeeDto e1Dto = new EmployeeDto(1L, "a1", "b1", d1,
                 "e@w.w1", "123", 2L);
-        EmployeeDto e2Dto = new EmployeeDto(2L, "a2", "b2",d1,
+        EmployeeDto e2Dto = new EmployeeDto(2L, "a2", "b2", d1,
                 "e@w.w1", "123", 2L);
         Employee e2 = e2Dto.toEmployee();
 
@@ -76,7 +72,7 @@ class EmployeeValidatorTest {
 
     @Test
     void validatePostRequestBody_EmployeeWithNullDepartment_ThrowsException() {
-        EmployeeDto e1Dto = new EmployeeDto(1L, "a1", "b1",null,
+        EmployeeDto e1Dto = new EmployeeDto(1L, "a1", "b1", null,
                 "e@w.w1", "123", 2L);
 
         when(employeeRepository.findByPhoneNumber(e1Dto.getPhoneNumber())).thenReturn(List.of());
@@ -92,7 +88,7 @@ class EmployeeValidatorTest {
     @Test
     void validatePostRequestBody_EmployeeWithNotExistingDepartment_ThrowsException() {
         Department d1 = new Department(2L, "a1", "a2");
-        EmployeeDto e1Dto = new EmployeeDto(1L, "a1", "b1",d1,
+        EmployeeDto e1Dto = new EmployeeDto(1L, "a1", "b1", d1,
                 "e@w.w1", "123", 2L);
 
         when(departmentRepository.existsById(d1.getId())).thenReturn(false);
@@ -110,7 +106,7 @@ class EmployeeValidatorTest {
     void validatePutRequestBody_EmployeeValid_ThrowsNoException() {
         long employeeId = 1L;
         Department d1 = new Department(1L, "a1", "a2");
-        EmployeeDto e1Dto = new EmployeeDto(1L, "a1", "b1",d1,
+        EmployeeDto e1Dto = new EmployeeDto(1L, "a1", "b1", d1,
                 "e@w.w1", "123", 2L);
         Employee e1 = e1Dto.toEmployee();
 
@@ -125,15 +121,15 @@ class EmployeeValidatorTest {
     void validatePutRequestBody_EmployeeWithNotUniqueField_ThrowsException() {
         long employeeId = 1L;
         Department d1 = new Department(1L, "a1", "a2");
-        EmployeeDto e1Dto = new EmployeeDto(1L, "a1", "b1",d1,
+        EmployeeDto e1Dto = new EmployeeDto(1L, "a1", "b1", d1,
                 "e@w.w1", "123", 2L);
-        EmployeeDto e2Dto = new EmployeeDto(2L, "a2", "b2",d1,
+        EmployeeDto e2Dto = new EmployeeDto(2L, "a2", "b2", d1,
                 "e@w.w1", "123", 2L);
         Employee e1 = e1Dto.toEmployee();
         Employee e2 = e2Dto.toEmployee();
 
         when(departmentRepository.existsById(d1.getId())).thenReturn(true);
-        when(employeeRepository.findByPhoneNumber(e1Dto.getPhoneNumber())).thenReturn(List.of(e1,e2));
+        when(employeeRepository.findByPhoneNumber(e1Dto.getPhoneNumber())).thenReturn(List.of(e1, e2));
         when(employeeRepository.findByEmail(e1Dto.getEmail())).thenReturn(List.of(e1, e2));
 
         assertThatExceptionOfType(DtoDbFieldsNotValidException.class).isThrownBy(
@@ -147,7 +143,7 @@ class EmployeeValidatorTest {
     @Test
     void validatePutRequestBody_EmployeeWithNullDepartment_ThrowsException() {
         long employeeId = 1L;
-        EmployeeDto e1Dto = new EmployeeDto(1L, "a1", "b1",null,
+        EmployeeDto e1Dto = new EmployeeDto(1L, "a1", "b1", null,
                 "e@w.w1", "123", 2L);
         Employee e1 = e1Dto.toEmployee();
 
@@ -165,7 +161,7 @@ class EmployeeValidatorTest {
     void validatePutRequestBody_EmployeeWithNotExistingDepartment_ThrowsException() {
         long employeeId = 1L;
         Department d1 = new Department(2L, "a1", "a2");
-        EmployeeDto e1Dto = new EmployeeDto(1L, "a1", "b1",d1,
+        EmployeeDto e1Dto = new EmployeeDto(1L, "a1", "b1", d1,
                 "e@w.w1", "123", 2L);
         Employee e1 = e1Dto.toEmployee();
 

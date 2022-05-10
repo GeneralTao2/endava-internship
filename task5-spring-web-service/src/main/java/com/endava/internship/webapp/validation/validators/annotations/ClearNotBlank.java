@@ -12,6 +12,8 @@ import java.lang.annotation.RetentionPolicy;
 @Constraint(validatedBy = ClearNotBlankValidator.class)
 public @interface ClearNotBlank {
     String message();
-    Class<?>[] groups() default { };
-    Class<? extends Payload>[] payload() default { };
+
+    Class<?>[] groups() default {};
+
+    Class<? extends Payload>[] payload() default {};
 }
